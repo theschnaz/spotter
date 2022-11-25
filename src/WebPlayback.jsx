@@ -58,7 +58,7 @@ const addLikedTracks = async (token) => {
     addTrackIds.push(doc.data().track.id);
   });
 
-  console.log("tracks arrary ", addTrackIds)
+  console.log("tracks arrary ", addTrackIds);
 
   try {
     const response = await axios.get("https://api.spotify.com/v1/me/tracks", {
@@ -77,8 +77,13 @@ const addLikedTracks = async (token) => {
 
     try {
       let i = 0;
+      let addTrack = false;
       response.data.items.forEach((item) => {
-        //const docRef = addDoc(collection(db, "songs"), response.data.items[i]);
+        if (!addTrackIds.includes(response.data.items[i].track.id)) {
+          //add the track if it is not in database; not already liked
+          const docRef = addDoc(collection(db, "songs"), response.data.items[i]);
+          
+        }
         i = i + 1;
       });
     } catch (e) {
