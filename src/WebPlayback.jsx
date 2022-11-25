@@ -144,6 +144,8 @@ function WebPlayback(props) {
 
       player.connect();
     };
+
+    addLikedTracks(props.token);
   }, []);
 
   if (!is_active) {
@@ -210,15 +212,6 @@ function WebPlayback(props) {
               }}
             >
               Add songs to queue
-            </button>
-            <br />
-            <button
-              className="btn-spotify"
-              onClick={() => {
-                addLikedTracks(props.token);
-              }}
-            >
-              get liked tracks
             </button>
           </div>
         </div>
