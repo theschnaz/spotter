@@ -26,23 +26,29 @@ const track = {
   artists: [{ name: "" }],
 };
 
-const addToQueue = async () => {
+const addToQueue = async (token) => {
   try {
-    const response = await axios.post(
-      "https://api.spotify.com/v1/me/player/queue",
-      "",
-      {
-        params: {
-          uri: "spotify:track:4iV5W9uYEdYUVa79Axb7Rh",
-        },
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization:
-            "Bearer BQC5aat7-KV_0T1kdeod59cmKdvcRGS-Ko8RyI2HppLqCKQ3F-v3hhxp1db7OHLJ0O1yhbSi89U8QyfuC6td6ThyWHoIYPKduEQTMSXMw39Ll-rGdp411WvldT7rgeeFysX3XJmN1Nl4zvoHJq9nYvCLj5laCel-GwHoFKVRrWU3SqAndQ",
-        },
+    let i = 0;
+    const querySnapshot = await getDocs(collection(db, "songs"));
+    querySnapshot.forEach(async (doc) => {
+      if (i === 0) {
+        i = i + 1;
+        const response = await axios.post(
+          "https://api.spotify.com/v1/me/player/queue",
+          "",
+          {
+            params: {
+              uri: "spotify:track:" + doc.data().track.id,
+            },
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
       }
-    );
+    });
   } catch (error) {
     console.log(error);
   }
@@ -81,8 +87,10 @@ const addLikedTracks = async (token) => {
       response.data.items.forEach((item) => {
         if (!addTrackIds.includes(response.data.items[i].track.id)) {
           //add the track if it is not in database; not already liked
-          const docRef = addDoc(collection(db, "songs"), response.data.items[i]);
-          
+          const docRef = addDoc(
+            collection(db, "songs"),
+            response.data.items[i]
+          );
         }
         i = i + 1;
       });
@@ -208,7 +216,7 @@ function WebPlayback(props) {
             <button
               className="btn-spotify"
               onClick={() => {
-                addToQueue();
+                addToQueue(props.token);
               }}
             >
               Add songs to queue
