@@ -58,10 +58,12 @@ const addLikedTracks = async (token) => {
   //get all tracks
   const querySnapshot = await getDocs(collection(db, "songs"));
   let addTrackIds = [];
+  let localSongs = [];
   querySnapshot.forEach((doc) => {
     // doc.data() is never undefined for query doc snapshots
     console.log("doc.data().track.id", " => ", doc.data().track.id);
     addTrackIds.push(doc.data().track.id);
+    localSongs.push(doc.data());
   });
 
   console.log("tracks arrary ", addTrackIds);
@@ -91,6 +93,7 @@ const addLikedTracks = async (token) => {
             collection(db, "songs"),
             response.data.items[i]
           );
+          localSongs.push(response.data.items[i]);
         }
         i = i + 1;
       });
@@ -100,6 +103,8 @@ const addLikedTracks = async (token) => {
   } catch (error) {
     console.log(error);
   }
+
+  return localSongs;
 };
 
 function WebPlayback(props) {
@@ -110,8 +115,9 @@ function WebPlayback(props) {
   const [is_active, setActive] = useState(false);
   const [player, setPlayer] = useState(undefined);
   const [current_track, setTrack] = useState(track);
+  const [songs, setSongs] = useState([]);
 
-  useEffect(() => {
+  useEffect(async () => {
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
     script.async = true;
@@ -153,7 +159,9 @@ function WebPlayback(props) {
       player.connect();
     };
 
-    addLikedTracks(props.token);
+    const localSongs = await addLikedTracks(props.token);
+    console.log("localSongs = ", localSongs);
+    setSongs(localSongs);
   }, []);
 
   if (!is_active) {
@@ -213,16 +221,19 @@ function WebPlayback(props) {
                 &gt;&gt;
               </button>
             </div>
-            <button
-              className="btn-spotify"
-              onClick={() => {
-                addToQueue(props.token);
-              }}
-            >
-              Add songs to queue
-            </button>
           </div>
+          
         </div>
+        {songs.map((song, index) => {
+            return (
+              <div key={index}>
+                <h2>name: {song.added_at}</h2>
+                <h2>country: {song.track.id}</h2>
+
+                <hr />
+              </div>
+            );
+          })}
       </>
     );
   }
