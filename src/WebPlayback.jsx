@@ -26,29 +26,22 @@ const track = {
   artists: [{ name: "" }],
 };
 
-const addToQueue = async (token) => {
+const addToQueue = async (token, song) => {
   try {
-    let i = 0;
-    const querySnapshot = await getDocs(collection(db, "songs"));
-    querySnapshot.forEach(async (doc) => {
-      if (i === 0) {
-        i = i + 1;
-        const response = await axios.post(
-          "https://api.spotify.com/v1/me/player/queue",
-          "",
-          {
-            params: {
-              uri: "spotify:track:" + doc.data().track.id,
-            },
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          }
-        );
+    const response = await axios.post(
+      "https://api.spotify.com/v1/me/player/queue",
+      "",
+      {
+        params: {
+          uri: "spotify:track:" + song,
+        },
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
       }
-    });
+    );
   } catch (error) {
     console.log(error);
   }
@@ -180,7 +173,7 @@ function WebPlayback(props) {
   } else {
     return (
       <>
-        <div className="container">
+        <div className="container" style={{ paddingBottom: 20 }}>
           <div className="main-wrapper">
             <img
               src={current_track.album.images[0].url}
@@ -222,18 +215,34 @@ function WebPlayback(props) {
               </button>
             </div>
           </div>
-          
         </div>
         {songs.map((song, index) => {
-            return (
-              <div key={index}>
-                <h2>name: {song.added_at}</h2>
-                <h2>country: {song.track.id}</h2>
+          return (
+            <div key={index} style={{ paddingTop: 5, paddingLeft: 20 }}>
+              <h4>
+                <a
+                  href={song.track.external_urls.spotify}
+                  style={{ color: "white" }}
+                  target="_blank"
+                >
+                  {song.track.name}
+                </a>
+              </h4>
+              <p>{song.track.artists[0].name}</p>
+              <button
+                className="btn-spotify"
+                onClick={() => {
+                  addToQueue(props.token, song.track.id);
+                }}
+              >
+                Add to Queue
+              </button>
 
-                <hr />
-              </div>
-            );
-          })}
+              <hr />
+              <br />
+            </div>
+          );
+        })}
       </>
     );
   }
