@@ -54,19 +54,19 @@ const addLikedTracks = async (token) => {
   let localSongs = [];
   querySnapshot.forEach((doc) => {
     // doc.data() is never undefined for query doc snapshots
-    console.log("doc.data().track.id", " => ", doc.data().track.id);
+    console.log("doc.data", " => ", doc.data());
     addTrackIds.push(doc.data().track.id);
     localSongs.push(doc.data());
   });
 
-  console.log("tracks arrary ", addTrackIds);
+  //console.log("tracks arrary ", addTrackIds);
 
   try {
     const response = await axios.get("https://api.spotify.com/v1/me/tracks", {
       params: {
-        market: "ES",
+        market: "US",
         limit: "10",
-        offset: "5",
+        offset: "0",
       },
       headers: {
         Accept: "application/json",
@@ -97,7 +97,9 @@ const addLikedTracks = async (token) => {
     console.log(error);
   }
 
-  return localSongs;
+  return localSongs.sort((x, y) => {
+    return new Date(x.added_at) < new Date(y.added_at) ? 1 : -1;
+  });
 };
 
 function WebPlayback(props) {
@@ -162,9 +164,15 @@ function WebPlayback(props) {
       <>
         <div className="container">
           <div className="main-wrapper">
+            <b>Go to your Spotify app and enable Spotter.</b>
+          </div>
+          <br />
+          <div className="main-wrapper">
             <b>
-              {" "}
-              Instance not active. Transfer your playback using your Spotify app{" "}
+              <img
+                src="https://firebasestorage.googleapis.com/v0/b/musalives.appspot.com/o/Screenshot%202022-11-28%20at%205.04.32%20PM.png?alt=media&token=4e637f64-4db6-4c83-83d8-2b6475c7f7e4"
+                width="400px"
+              />
             </b>
           </div>
         </div>
