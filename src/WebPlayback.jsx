@@ -6,12 +6,12 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 const axios = require("axios").default;
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAOf8EL0mCIS89vymdsRsjq0-KHJdXDTW0",
-  authDomain: "musalives.firebaseapp.com",
-  projectId: "musalives",
-  storageBucket: "musalives.appspot.com",
-  messagingSenderId: "353183638905",
-  appId: "1:353183638905:web:5e3f21c2a9c0bc7978bba8",
+  apiKey: "AIzaSyDWAqcLWbwvm0585pvx6a46ldqN-q0qJ9A",
+  authDomain: "spotter-33098.firebaseapp.com",
+  projectId: "spotter-33098",
+  storageBucket: "spotter-33098.appspot.com",
+  messagingSenderId: "1085573493038",
+  appId: "1:1085573493038:web:67607d29799e24c981cabf",
 };
 
 // Initialize Firebase
@@ -170,7 +170,7 @@ function WebPlayback(props) {
           <div className="main-wrapper">
             <b>
               <img
-                src="https://firebasestorage.googleapis.com/v0/b/musalives.appspot.com/o/Screenshot%202022-11-28%20at%205.04.32%20PM.png?alt=media&token=4e637f64-4db6-4c83-83d8-2b6475c7f7e4"
+                src="https://pbs.twimg.com/profile_images/1398007489174585348/RatCuwok_400x400.jpg"
                 width="400px"
               />
             </b>
