@@ -5,6 +5,7 @@ import "./App.css";
 
 function App() {
   const [token, setToken] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     async function getToken() {
@@ -17,9 +18,12 @@ function App() {
         json.access_token
       );
       setToken(json.access_token);
+      setIsLoggedIn(true);
     }
 
-    getToken();
+    if (!isLoggedIn) {
+      getToken();
+    }
   }, []);
 
   return <>{token === "" ? <Login /> : <WebPlayback token={token} />}</>;
