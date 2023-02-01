@@ -42,6 +42,7 @@ const addToQueue = async (token, song) => {
         },
       }
     );
+    alert("Song added to your Spotify queue!");
   } catch (error) {
     console.log(error);
   }
@@ -170,8 +171,8 @@ function WebPlayback(props) {
           <div className="main-wrapper">
             <b>
               <img
-                src="https://pbs.twimg.com/profile_images/1398007489174585348/RatCuwok_400x400.jpg"
-                width="400px"
+                src="https://firebasestorage.googleapis.com/v0/b/perfect-day-19585.appspot.com/o/website%2Fspotter.png?alt=media&token=588f0699-4e48-472c-9e5a-4a0a5a88b520"
+                width="500px"
               />
             </b>
           </div>
