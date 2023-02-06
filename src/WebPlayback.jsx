@@ -48,7 +48,30 @@ const addToQueue = async (token, song) => {
   }
 };
 
-const addLikedTracks = async (token) => {
+const getCurrentUser = async (token) => {
+  let localUser = [];
+  try {
+    const response = await axios.get("https://api.spotify.com/v1/me", {
+      params: {},
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    console.log("display_name = ", response.data.display_name);
+    console.log("externalURL = ", response.data.external_urls.spotify);
+    localUser = response.data;
+  } catch (error) {
+    console.log(error);
+  }
+
+  return localUser;
+};
+
+const addLikedTracks = async (token, localUser) => {
+  console.log("top of liked tracks, user = ", localUser);
+
   //get all tracks
   const querySnapshot = await getDocs(collection(db, "songs"));
   let addTrackIds = [];
@@ -83,6 +106,9 @@ const addLikedTracks = async (token) => {
       response.data.items.forEach((item) => {
         if (!addTrackIds.includes(response.data.items[i].track.id)) {
           //add the track if it is not in database; not already liked
+          var data = response.data.items[i];
+          data.liked_by = localUser.display_name;
+          data.liked_by_url = localUser.external_urls.spotify;
           const docRef = addDoc(
             collection(db, "songs"),
             response.data.items[i]
@@ -155,7 +181,9 @@ function WebPlayback(props) {
       player.connect();
     };
 
-    const localSongs = await addLikedTracks(props.token);
+    console.log("before localUser");
+    const localUser = await getCurrentUser(props.token);
+    const localSongs = await addLikedTracks(props.token, localUser);
     console.log("localSongs = ", localSongs);
     setSongs(localSongs);
   }, []);
@@ -239,6 +267,7 @@ function WebPlayback(props) {
               </h4>
               <p>{song.track.artists[0].name}</p>
               <button
+                style={{marginTop:5}}
                 className="btn-spotify"
                 onClick={() => {
                   addToQueue(props.token, song.track.id);
@@ -246,8 +275,16 @@ function WebPlayback(props) {
               >
                 Add to Queue
               </button>
-
+              <br />
+              <div style={{fontSize: 12, paddingBottom: 25, paddingTop:10}}>
+                (First liked by{" "}
+                <a href={song.liked_by_url} target="_blank" style={{ color: "white" }}>
+                  {song.liked_by}
+                </a>
+                )
+              </div>
               <hr />
+
               <br />
             </div>
           );
